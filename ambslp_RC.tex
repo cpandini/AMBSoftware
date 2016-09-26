@@ -148,3 +148,19 @@ object is provided the test is not performed.
 
 \subsubsection{AMBStandaloneTest schema}
 \label{sec:ambtestschema}
+
+This schema represents the input parameters for an \AMBoard standalone test.
+This kind of tests reads data from the HIT FPGA input FIFOs instead of waiting
+them from the AUX. During this tests, AUX data will be rejected, while the
+output can reach the AUX.
+
+\begin{description}
+	\item[TestFilePath'':] this is the path of the file containing the data to
+	be loaded into the board. The path has to be accessible from the RCD application,
+ indeed	from a path available in SBC computers of the crate, where the board is used,
+ or a network path, eventually public. Type string.
+ 
+ \item[Loop:] boolean flag that controls if the data are sent only once or
+ in a continuous loop. The loop has to stopped through RC or generally sending
+ an init to the board. Type bool, default 0.
+\end{description}

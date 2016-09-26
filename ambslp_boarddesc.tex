@@ -36,7 +36,36 @@ or hit.
 
 \subsection{Input and output distribution and monitor}
 
-The board receives input through the ERNI connector
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+	\hline\hline
+	\textbf{Input link} & \textbf{AUX FIFO}& \textbf{AM chip bus} \\
+	\hline\hline
+	0 & & 4 \\ 
+	1 & & 5 \\ 
+	2 & & 6 \\ 
+	3 & & 7 \\
+	\hline
+	4 & & 0 \\
+	5 & & 0 \\
+	6 & & 1 \\
+	7 & & 1 \\
+	8 & & 2 \\
+	9 & & 2 \\
+	10 & & 3 \\
+	11 & & 3 \\
+	\hline
+\end{tabular}
+
+\caption{The table represents the mapping between the input link
+	in the HIT FPGA, the AUX FIFOs and the AM chip busses. The middle line
+	separates the so called SCT links (0-3) and pixel links (4-11).}
+\label{tab:inputmap}
+\end{table}
+The board receives input through the ERNI connector, situated in position 3 of the
+VME board, see lower right corner in Fig.~\ref{fig:amboard_top}. The input
+is composed by 12 links at 2 GB/s: 4 links are used by the 
 
 \subsection{Chips configuration}
 \label{sec:chipconfig}
@@ -84,3 +113,5 @@ More bits are swapping larger will be the  power consumption induced during idle
 periods. During the idle period the dummy hit is alternated with real idle words,
 not causing bit swap in the chip, the ratio between the two type of data can also be
 set.
+
+\subsection{Available test procedures}
