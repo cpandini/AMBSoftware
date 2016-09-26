@@ -1,0 +1,63 @@
+The tools describes up to now usually provide a low-level
+interaction with the AM board, controlling a single feature
+or asserting a single command at the time. It is however 
+possible to perform high level procedures, composed by a sequence
+of commands.
+
+To perform this kind of operation the command line tool
+\textbf{\texttt{ambslp\_procedure}} commands can be used. The
+command line to run this tool will be similar to the
+following:
+\begin{verbatim}
+$ ambslp_procedure [options] transition1 [transition2 ...]
+\end{verbatim}
+where the options block can specify parameters used by one, or more,
+of the following \emph{transitions}. The optiosn are often in common
+with other tools, already described, clarifications already by the emended help.
+The \emph{transitions} are commands related to common procedures
+that the board needs, the name are often in common with the
+run control module. The transitions will be executed
+sequentially, following the order in the submission string, they can 
+be also executed multiple times.
+
+Available transitions are described in deatails within the following 
+subsections. The name of the procedures are often related to the run
+control transition, more details in \ref{sec:rcmodule}.
+
+\subsection{Configure the boards}
+\label{sec:procconfigure}
+
+The procedure keywords are \textbf{configure} or \textbf{config}  this procedure provide some basic configuration of the boards, should done every time a test start. It
+    also configure the AM chips output and the GTP link from and to the
+    ROAD FPGA.
+
+\subsection{Loading a pattern bank}
+\label{sec:procloadbank}
+The keywords are \textbf{loadbank} and \textbf{load}, 
+this command performs the
+	sequence of operations required to write a pattern bank within
+	the AM chips in the board. The parameters for the pattern bank 
+	that will be written are decided through command line options.
+	Used options: \texttt{bankpath}, \texttt{type}, \texttt{N}.
+    
+    The \texttt{bankpath} option allows to set the pattern bank
+    file to be loaded. The path can be a special keyword that
+    allows automatic bank generation, two types of banks are
+    currently supported: \texttt{random}, generating a random bank,
+    \texttt{seq[N]}, generating bank where all super-strip of
+    a given pattern are equal and function of the pattern position
+    of the chip following this formula: $SS[i] = i\%N$, where \% is
+    the integer rest operator, i the pattern position within the chip
+    and N the optional parameter passed after the \texttt{seq}
+    keyword, if not specified this is equal to the number of patterns
+    per chip loaded. \texttt{N}, or \texttt{nPattsPerChip}, sets
+    the number of patterns per chip that will be loaded.
+
+\subsection{Connect the boards}
+\label{sec:procconnect}
+
+The keyword is	\textbf{connect}, this connects transition
+	of the ATLAS run control software, more explanation later, and
+	performs the link synchronization for the chips' input busses and
+	with the HIT FPGAs, also ensure the input links from the AUX
+	are properly set.

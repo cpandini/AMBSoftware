@@ -1,0 +1,150 @@
+
+The ATLAS run control (RC) allows a coordinated control of hardware and software
+resources. The RC performs \emph{transition}, to which the resource reacts
+performing specific operations, depending on setup configurations that can be
+specified in a centralized service, the object key service (OKS). The RC commands
+are interpreted as transition in a final state machine, all components are
+expect to move to the same state responding to a request. Each item controlled
+by the RC performs the transition without possibility to interact with other components.
+In practice, to control a resource, in this case the AMB, there is the need of a 
+\textbf{RC module} and at least one \textbf{OKS schema} file. The RC module describes
+an objects that reacts to the specific transition of the RC FSM, while the OKS
+schema represents the parameters that describe the RC module at runtime. Each 
+AMB RC module has a related schema.
+
+\subsection{Run control module implementation}
+\label{sec:rcmodule}
+
+The AMB RC module class is the \textbf{\RCModule}, inheriting
+form the \texttt{ROS::ReadoutModule}. It reimplements the following
+public methods: setup, configure, ... more details on the operations
+performed in each commands are given in the following sub-sections.
+
+\subsubsection{Setup}
+
+This method reads the OKS configuration for the given \AMBoard, 
+retrieving all the required keys. 
+
+\subsubsection{Configure} 
+
+The configure methods reacts to the \textbf{configure} transition of the RC,
+and its performed as soon after the transition starts. The internal
+operations are controlled by the RC\_configure high level procedure and
+loads a pattern bank,
+see page \pageref{sec:procconfigure} in \ref{sec:procconfigure}.
+
+\subsection{The AMB schema files}
+
+To describe an \AMBoard there are a few schema files that are available, 
+it follow the documentation of all the attributes.
+
+\subsubsection{ReadoutModule\_Ambslp schema file}
+
+This file describes the parameters of \RCModule. It inherits from 
+\texttt{ReadoutModule} and \texttt{ResourceSetAND}. It declares the following
+attributes:
+\begin{description}
+\item[Name:] sets the module name, e.g. ``AMB-2-15''. No default value is provided.
+
+\item[Crate:] a numeric identifier for the crate. Type u32, default: 0.
+
+\item[Slot:] the slot number where the board is plugged. Type u32, default: 0.
+
+\item[HITFWVersion:] firmware version expected for the HIT FPGA. If the
+FW version doesn't match the configuration procedure fails. 
+If the value is $0x0$ the check is not performed. Type u32, hexadecimal, 
+default: 0
+
+\item[ROADFWVersion:] firmware version expected for the ROAD FPGA. 
+Type u32, hexadecimal, default: 0
+
+\item[VMEFWVersion:] firmware version expected for the ROAD FPGA. 
+Type u32, hexadecimal, default: 0
+
+\item[CTRLFWVersion:] firmware version expected for the CTRL FPGA. 
+Type u32, hexadecimal, default: 0
+
+
+\item[LAMBFWVersion:] firmware version expected for the BUSCA FPGA each LAMB;
+all installed LAMBs are expected to have the FW version. 
+Type u8, hexadecimal,  default: 0.
+
+\item[DryRun:] boolean flag, when true the RC module avoids to perform VME calls,
+allowing the RC infrastructure to be tested even without boards. Type bool,
+default: 0.
+
+\item[ForceWrite:] boolean flag used to force the write of a pattern bank; when
+false the bank checksum register is matched with the one of the bank in memory, then
+patterns are then loaded only if the two don't match; when true the bank is realoded,
+skipping the check. Type bool, default: 0.
+
+\item[DummyHit:] this represents the value of the \emph{dummy hit} word registers,
+if the value is $0x0000000$ the feature is disabled, if not a dummy hit loop is
+started during IDLE periods, as explained in \ref{sec:powercontrol}. Type u32,
+default: 0.
+
+\item[DCDCOVerVolt:] this value is used by the DCDC setup configuration to reset
+the DCDC value, the value is function of the bias resistor that usually depend
+on the board version type but it may change for other reasons. Type u32, default
+$0x18f6$.
+
+\item[DCDCSetVolt:] this value is used to set the DCDC voltage output to the
+desired value, as some relation with the resistors mounted on the DCDC. Type u32,
+hexadecimal, default $0x02e3$ (1.15 V output on AMBv5).
+
+\item[DCDCScale:] value used to convert the voltages obtained from the DCDC
+check in volts. Type float, default $1.6666666666666667$.
+
+\item[AddTestPattern:] boolean flag that control the writing of the test pattern,
+assumed to exist in every chip (see Sec.~\ref{sec:chipconfig}). If true a test
+pattern is forced in the chip's position 0, patterns loaded by the user will start from
+position 1 in the chip. If true the available space for patterns will be
+reduced of 64, because 1 special pattern per chip will added by the procedure.
+If false the pattern bank from the user will be loaded as it is.
+
+\item[OverrideSpecialPattern:] boolean flag that control the special pattern
+SS values overwriting the SSs of the original bank, this implicitly assumes 
+that the pattern bank has been prepared respecting this board constraint.
+Type bool, default 1`.'
+
+\item[DumpFolder:] path where dump files are saved. Currently unused.
+
+\item[LAMBMask:] 32-bit hexadicimal mask, unused.
+
+\item[InitialThreshold:] threshold used during the pattern bank loading. Type u32,
+decimal, default 15.
+
+\item[Threshold:] pattern matching threshold. Type u32, decimal, default 7.
+
+\item[CheckBank:] flag that enables the possibility to check the bank content
+through JTAG. The procedure is extremely slow and not performed by default.
+Type bool, default 0.
+
+\item[BypassBus:] unused. Type u32, hexadecimal, default 0x24.
+
+\item[PCBVersion:] unused. Type u32, decimal, default 0.
+
+\item[DVmajority:] unused. Type boolean, default 0.
+
+\item[Extras:] array of strings, with dynamic size, that can be freely used by the code.
+The key is provided to allow to have unexpected parameter in the code in all cases
+where a new schema cannot be deployed, e.g. quick code patches. The parsing of the
+field is expected to be strongly dependent from the code tag.
+
+\item[PatternBankConf:] link to an OKS object of the \textbf{PatternBankConf} type,
+see Sec.~\ref{sec:pattbankschema}. This objects describe the location of the pattern
+bank to be loaded in this bank, if no object is provided the configuration stage
+of the \RCModule will fail.
+
+\item[AMBStandaloneTest:] standalone test object, defined in Sec.~\ref{sec:ambtestschema}.
+When an object on this type is set the \AMBoard is expected to load test-vector
+data from the HIT input FIFOs instead of expecting data from the AUX. If no
+object is provided the test is not performed.
+\end{description}
+
+
+\subsubsection{PatternBankConf schema}
+\label{sec:pattbankschema}
+
+\subsubsection{AMBStandaloneTest schema}
+\label{sec:ambtestschema}

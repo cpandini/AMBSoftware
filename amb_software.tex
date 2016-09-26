@@ -1,0 +1,336 @@
+\documentclass[UKenglish]{latex/atlasdoc}
+\usepackage{latex/atlaspackage}
+\usepackage{latex/atlasphysics}
+\usepackage{latex/atlascontribute}
+
+\usepackage{xspace}
+%\usepackage{verbatim}
+
+
+\graphicspath{{logos/}{figures/}}
+
+
+% Title, abstract and document 
+\input{atlas-document-metadata}
+\input{ambslp-defs}
+
+\begin{document}
+	
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+This document describes  the structure, working principle and use cases for
+the online software package used to
+control the associative memory board, then referred as AMB or AMBSLP.
+The software is contained in the package
+\hyperlink{https://svnweb.cern.ch/trac/atlastdaq/browser/FTK/ambslp?order=name}
+	{FTK/ambslp}
+and managed by the AMB team. Instruction on how to compile the
+package within the ATLAS TDAQ software framework are provided elsewhere,
+with all required details. Indeed, the following documentation assumes knowledge
+on how to compile it and provide information for both users and developers,
+in order to provide documentation on how to control the board and
+add or maintain the main functionalities.
+
+More specifically,
+the software  package provides:
+\begin{itemize}
+  \item a library containing low level functions
+  used to control the board;
+
+	\item a module loaded by the ATLAS run control (RC) to control the board,
+	associated with the board description within this framework, base monitoring
+    tools and more;
+    
+	\item a set of standalone tools, as compiled programs and scripts,
+	used to control and monitor the board from a command line shell.
+\end{itemize} 
+
+The document goals are to both support the experts to verify
+the behavior of a board, fixing eventual issues, as well as the developer to
+change to evolve the code. The document will also try to document
+the RC related parts and standalone software.
+
+An initial section will be devoted to document some basic features of the boards,
+related to its working principle, related to firmware and electronic characteristics.
+The following section will provide more detailed information on the software components
+designed to allow a correct working of the board and allowing to control
+in different scenarios.
+
+\section{Associative board working principle and features}
+\input{ambslp_boarddesc}
+
+\section{Configure and control the board standalone tools}
+
+\subsection{Control the board status}
+To control the board status the main available command is
+\textbf{\texttt{ambslp\_status\_main}}. This should be
+launched from the VME SBC or in a node where the ATLAS Information
+Service (IS) available.
+
+The command line options are limited. The most important are the \textbf{slot} 
+number, used to set the VME slot where the board in installed and
+the partition name, used to eventually retrieve the board
+information from IS.
+
+In both cases the output is printed on the screen and can be quite 
+verbose, for this reason an example will be presented here in
+pieces.
+
+\begin{itemize}
+	\item The first part reports if the data are from IS or not and the
+	firmware version uploaded into the FPGAs:
+	\begin{verbatim}
+	++++++++++++++++++++++++++
+	ambslp_status(), read from IS:
+	0Hit Firmware version:  0xd220a7df
+	CONTROL Firmware version:  0x4
+	VME Firmware version:  0x521
+	ROAD Firmware version:  0x2a210413
+	\end{verbatim}
+	in case of problem  the firmware version  can be 0xffffffff or 0x0, 
+	both values are commonly related to a configuration issue.
+	
+	\item The following part reports the temperature on the LAMBs:
+\begin{verbatim}
+++++++++++++++++++++++++++
+Temperature measurements
+VME slot front | LAMB2 | LAMB2 | LAMB0 | LAMB0 | VME back plane
+VME slot front | LAMB3 | LAMB3 | LAMB1 | LAMB1 | VME back plane
+|    0  |    0  |   34  |   32  |
+|   28  |   29  |   29  |   28  |
+\end{verbatim}		
+	the reported values are organized in rows and columns, reporting
+	the geographical organization of the LAMBs within the AMB. A $0$
+	temperature usually means that no card is installed in a specific slot,
+	$255$ means that the sensore is not instlled or not working,
+	better information can be assessed checking for the board information
+	into EDMS.
+
+	\item The following bloc reports the status of the HIT FPGA. At the
+	begin of this long output section the eventual test-mode (TMODE) and
+	PLL locks are reported, the presence mask of the LAMBs, then hold and 
+	empty status for the input FIFOs.
+	for the links
+\begin{verbatim}
+++++++++++++++++++++++++++
+HIT STATUS
+TMODE:           1
+PLL lock:        f
+PLL REF LOCK:    0
+
+LAMB mask:  f00
+
+SCT hold status:  0
+PIX hold status:  a6
+
+SCT empty status:  6
+PIX empty status:  0
+\end{verbatim}
+	The presence mask is a 4-digit number where \textbf{0} means the 
+	\emph{card is present}, \textbf{f} the \emph{card is missing}, the
+	example can be read as f00=0f00, that means LAMB 2 is missing.
+
+	\item The next portion of the HIT report section represents the
+	alignment of the serial links to the chips and the AUX.
+\begin{verbatim}
+GTP align QUAD216:  1 - 1 - 1
+GTP align QUAD213:  1 - 1 - 1
+GTP align QUAD116:  1 - 1 - 1
+GTP align QUAD113:  1 - 1 - 1
+
+GTP reset done QUAD 216 RX:  f - TX f
+GTP reset done QUAD 213 RX:  f - TX f
+GTP reset done QUAD 116 RX:  f - TX f
+GTP reset done QUAD 113 RX:  f - TX f
+\end{verbatim}
+
+	\item The final part of the HIT summary shows the HIT FSM satus,
+	useful in case of debugging of the board, the input rates and the number
+	of errors in each link.
+\begin{verbatim}
+HIT SCT FSM status: 0x1121
+HIT PIX FSM status: 0x1111
+
+ch 0    ch 1    ch 2    ch 3    ch 4    ch 5    ch 6    ch 7   ch 8     ch 9    ch 10   ch 11
+HOLD  1s        5e-08   4e-08   4e-08   4e-08   1.51812 0.00133648      1.5059 0.00656278       1.51965 0.00053916      1.50891 0.0108022
+EMPTY 1s        1.51084 1.51084 1.51085 1.51086 2.38e-06        1.09e-06       2.49e-06 1.05e-06        2.25e-06        1.16e-06        2.31e-06        1.04e-06
+
+Lost of Sync error counter. For each link count 0-255 and then wrap around.
+SCT link 0:    00
+SCT link 1:    00
+SCT link 2:    00
+SCT link 3:    00
+PIX link 0_0:  00
+PIX link 0_1:  00
+PIX link 1_0:  00
+PIX link 1_1:  00
+PIX link 2_0:  00
+PIX link 2_1:  00
+PIX link 3_0:  00
+PIX link 3_1:  00
+\end{verbatim}
+
+	\item The next part of the staus represents the CTRL FPGA, where
+	the FSM state in controlling HIT and ROAD FPGAs are reported. The
+	block is self-explanatory
+\begin{verbatim}
+++++++++++++++++++++++++++
+CONTROL STATUS
+Firmware:        15 v.4
+FSM state Hit:   1
+FSM state Road:  2
+
+Control FSMs are documented in Figure 4, section 1.2.1 of the AM board documentation.
+FSM state HIT:  0 = wait for initial global init
+1 = send hits event N; wait for HIT end event on all channels and for DONE ROAD previous event
+2 = wait X cycles
+3 = DONE HIT event N, send INIT_EV
+4 = wait a few cycles
+FSM state ROAD: 0 = wait for initial global init
+2 = DONE ROAD event N-1
+1 = send ROAD to AUX event N-1
+3 = wait a few cycles
+\end{verbatim}
+
+	\item The following block of messages refers to the ROAD FPGA. 
+\begin{verbatim}
+++++++++++++++++++++++++++
+ROAD STATUS
+Firmware:      14 v.1
+TMODE:         0
+PLL lock:      f
+PLL REF LOCK:  0
+
+Hold Aux status:  0
+
+Empty Fifo Lamb_0 Status:      f
+Empty Fifo Lamb_1 Status:      f
+Empty Fifo Lamb_2 Status:      f
+Empty Fifo Lamb_3 Status:      f
+
+Prog Full Fifo Lamb_0 Status:  0
+Prog Full Fifo Lamb_1 Status:  0
+Prog Full Fifo Lamb_2 Status:  0
+Prog Full Fifo Lamb_3 Status:  0
+
+ROAD input link UP QUAD216:  c
+ROAD input link UP QUAD213:  f
+ROAD input link UP QUAD116:  c
+ROAD input link UP QUAD113:  f
+
+GTP reset done QUAD 216 RX:  f - TX f
+GTP reset done QUAD 213 RX:  f - TX f
+GTP reset done QUAD 116 RX:  f - TX f
+GTP reset done QUAD 113 RX:  f - TX f
+\end{verbatim}
+	The first registers
+	report on the test-mode flag and the PLL locks. The eventual hold signals from the 
+	AUX are also reported. The are then the registers related to the empty or full 
+	status for the FIFOs that collect the output from each LAMB, 
+	
+	\item 
+\begin{verbatim}
+LAMB = 0
+Missing patternX link 0 = 0x0 0x0 0x0 0x0
+Missing patternX link 1 = 0x0 0x0 0x0 0x0
+Missing patternX link 2 = 0x0 0x0 0x0 0x0
+Missing patternX link 3 = 0x0 0x0 0x0 0x0
+LAMB = 1
+Missing patternX link 4 = 0x0 0x0 0x0 0x0
+Missing patternX link 5 = 0x0 0x0 0x0 0x0
+Missing patternX link 6 = 0x0 0x0 0x0 0x0
+Missing patternX link 7 = 0x0 0x0 0x0 0x0
+LAMB = 2
+Missing patternX link 8 = 0x0 0x0 0x0 0x0
+Missing patternX link 9 = 0x0 0x0 0x0 0x0
+Missing patternX link a = 0x0 0x0 0x0 0x0
+Missing patternX link b = 0x0 0x0 0x0 0x0
+LAMB = 3
+Missing patternX link c = 0x0 0x0 0x0 0x0
+Missing patternX link d = 0x0 0x0 0x0 0x0
+Missing patternX link e = 0x0 0x0 0x0 0x0
+Missing patternX link f = 0x0 0x0 0x0 0x0
+\end{verbatim}
+
+	\item the final part of the \texttt{ambslp\_status\_main} output
+	reports the disparity error: from the link:
+\begin{verbatim}
+LAMB0 RX 8b/10b or disparity errors = 0x0
+LAMB1 RX 8b/10b or disparity errors = 0x0
+LAMB2 RX 8b/10b or disparity errors = 0xffffffff
+LAMB3 RX 8b/10b or disparity errors = 0x0
+\end{verbatim}
+	there is a 32-bit register available for each LAMB, the number is at
+	the begin of the line, and the bits in the word represents the serial
+	lines at had at least one disparity error. This bit can only be reset
+	with a reinitialization of the board of levels 0 and 2,
+	 see \ref{sec:ambslpinit} for more information.
+\end{itemize}
+
+\subsection{Initialize the board}
+\label{sec:ambslpinit}
+
+The AMB initialization is performed sending a specific command
+to the board through the VME bus, this can be done using the 
+\textbf{\texttt{ambslp\_init\_main}} program. The program has two
+main options: the board slot (\verb|--slot--|)and reset level (\verb|--amb_lamb| 
+or positional argument).
+Examples of the command line are:
+\begin{verbatim}
+$ ambslp_init_main --slot 2 --amb_lamb <N>
+$ ambslp_init_main --slot 2 <N>
+\end{verbatim}
+
+At the moment there are 4 initialization levels available:
+\begin{description}
+	\item[0] this performs a basic reset of the FSMs, eventual loops
+	are stopped, FIFO content and configuration registers are unchanged.
+	
+	\item[1] this performs a reset of LAMB's FIFOs.
+	
+	\item[2] performs a cleanup of the AMB's FIFOs.
+	
+	\item[3] perfoms a full reinitialization of the configuration registers
+	in the board.
+\end{description}
+
+
+\subsection{Configure the AM chips}
+
+
+
+\subsection{Pattern bank setup}
+\label{sec:bankload}
+
+A pattern bank can be loaded from \ldots
+
+\section{High-level procedures}
+\label{sec:highlevel}
+
+\input{ambslp_procedures}
+
+\section{Run control module}
+
+\input{ambslp_RC}
+
+\section{AMBoard class and library structure}
+\label{sec:library}
+
+The \texttt{ambslp} package is mostly written in C++, requiring C++11 
+compatible compilers. It defines the \textbf{\AMBoard} class and other low
+level function able to communicate, to spy or change the state of the board.
+Most of the 
+
+
+\appendix
+\section{Common example}
+\subsection{Configure the board with a random bank}
+
+\begin{verbatim}
+$ ambslp_procedure --slot 15 --bankpath random configure load connect
+\end{verbatim}
+
+\end{document}
