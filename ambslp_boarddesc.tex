@@ -39,7 +39,7 @@ or hit.
 \begin{table}
 	\centering
 	\begin{tabular}{|l|l|l|}
-	\hline\hline
+	\hline
 	\textbf{Input link} & \textbf{AUX FIFO}& \textbf{AM chip bus} \\
 	\hline\hline
 	0 & & 4 \\ 
@@ -62,6 +62,38 @@ or hit.
 	in the HIT FPGA, the AUX FIFOs and the AM chip busses. The middle line
 	separates the so called SCT links (0-3) and pixel links (4-11).}
 \label{tab:inputmap}
+\end{table}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\textbf{ROAD link} & \textbf{Geo-addresses} & \textbf{TF processor} \\
+		\hline\hline
+		0 & & \\
+		1 & & \\
+		2 & & \\
+		3 & & \\
+		\hline
+		4 & & \\
+		5 & & \\
+		6 & & \\
+		7 & & \\
+		\hline
+		8 & & \\
+		9 & & \\
+		10 & & \\
+		11 & & \\
+		\hline
+		12 & & \\
+		13 & & \\
+		14 & & \\
+		15 & & \\
+		\hline
+	\end{tabular}
+	
+	\caption{The table shows the mapping between the output link within the
+		ROAD FPGA, the chips' geographical address and the track fitter processor.}
 \end{table}
 The board receives input through the ERNI connector, situated in position 3 of the
 VME board, see lower right corner in Fig.~\ref{fig:amboard_top}. The input
