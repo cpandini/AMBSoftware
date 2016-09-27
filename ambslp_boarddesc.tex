@@ -70,22 +70,22 @@ or hit.
 		\hline
 		\textbf{ROAD link} & \textbf{Geo-addresses} & \textbf{TF processor} \\
 		\hline\hline
-		0 & & \\
+		0 & & \multirow{4}{*}{0}\\
 		1 & & \\
 		2 & & \\
 		3 & & \\
 		\hline
-		4 & & \\
+		4 & & \multirow{4}{*}{1}\\
 		5 & & \\
 		6 & & \\
 		7 & & \\
 		\hline
-		8 & & \\
+		8 & & \multirow{4}{*}{2}\\
 		9 & & \\
 		10 & & \\
 		11 & & \\
 		\hline
-		12 & & \\
+		12 & & \multirow{4}{*}{3}\\
 		13 & & \\
 		14 & & \\
 		15 & & \\
@@ -93,7 +93,8 @@ or hit.
 	\end{tabular}
 	
 	\caption{The table shows the mapping between the output link within the
-		ROAD FPGA, the chips' geographical address and the track fitter processor.}
+		ROAD FPGA, the chips' geographical address and the track fitter processor.
+		The intermediate lines group the output links by LAMB.}
 \end{table}
 The board receives input through the ERNI connector, situated in position 3 of the
 VME board, see lower right corner in Fig.~\ref{fig:amboard_top}. The input
