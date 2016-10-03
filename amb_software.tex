@@ -65,6 +65,9 @@ in different scenarios.
 
 \section{Configure and control the board standalone tools}
 
+The status of the board is controlled by reading VME registers, associated
+to the various.
+
 \subsection{Control the board status}
 To control the board status the main available command is
 \textbf{\texttt{ambslp\_status\_main}}. This should be
@@ -325,6 +328,11 @@ compatible compilers. It defines the \textbf{\AMBoard} class and other low
 level function able to communicate, to spy or change the state of the board.
 Most of the 
 
+\section{Extra tools}
+
+\subsection{Board simulation}
+
+\input{ambslp_boardsim}
 
 \appendix
 \section{Common example}

@@ -83,11 +83,6 @@ if the value is $0x0000000$ the feature is disabled, if not a dummy hit loop is
 started during IDLE periods, as explained in \ref{sec:powercontrol}. Type u32,
 default: 0.
 
-\item[DCDCOVerVolt:] this value is used by the DCDC setup configuration to reset
-the DCDC value, the value is function of the bias resistor that usually depend
-on the board version type but it may change for other reasons. Type u32, default
-$0x18f6$.
-
 \item[DCDCSetVolt:] this value is used to set the DCDC voltage output to the
 desired value, as some relation with the resistors mounted on the DCDC. Type u32,
 hexadecimal, default $0x02e3$ (1.15 V output on AMBv5).
@@ -95,7 +90,7 @@ hexadecimal, default $0x02e3$ (1.15 V output on AMBv5).
 \item[DCDCScale:] value used to convert the voltages obtained from the DCDC
 check in volts. Type float, default $1.6666666666666667$.
 
-\item[AddTestPattern:] boolean flag that control the writing of the test pattern,
+\item[AddTestPattern:] boolean flag that controls the writing of the test pattern,
 assumed to exist in every chip (see Sec.~\ref{sec:chipconfig}). If true a test
 pattern is forced in the chip's position 0, patterns loaded by the user will start from
 position 1 in the chip. If true the available space for patterns will be
@@ -109,7 +104,9 @@ Type bool, default 1`.'
 
 \item[DumpFolder:] path where dump files are saved. Currently unused.
 
-\item[LAMBMask:] 32-bit hexadicimal mask, unused.
+\item[LAMBMask:] 32-bit hexadecimal mask that stores where which LAMBs are expected
+to be present in the board, this is used to eventually stop the configuration
+if the expected boards are not installed.
 
 \item[InitialThreshold:] threshold used during the pattern bank loading. Type u32,
 decimal, default 15.
@@ -155,7 +152,7 @@ them from the AUX. During this tests, AUX data will be rejected, while the
 output can reach the AUX.
 
 \begin{description}
-	\item[TestFilePath'':] this is the path of the file containing the data to
+	\item[TestFilePath:] this is the path of the file containing the data to
 	be loaded into the board. The path has to be accessible from the RCD application,
  indeed	from a path available in SBC computers of the crate, where the board is used,
  or a network path, eventually public. Type string.
