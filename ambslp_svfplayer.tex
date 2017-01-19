@@ -5,7 +5,8 @@ that the firmware of VME FPGA cannot be changed.
 
 The procedure is based on the creation an SVF file, the SVF file can then
 be used by a specific program that send uses those information to reprogram
-the FPGAs: \texttt{\index{ambslp\_svfplayer}}. The SVF file an contain information
+the FPGAs: \texttt{ambslp\_svfplayer}. The SVF file 
+an contain information
 to reconfigure the FPGA, reprogramming the flash memories or other
 common operations, as reading the ID codes.
 
@@ -42,7 +43,8 @@ FPGA or a single SPI FLASH memory, read the ID codes\ldots.
 
 The program to be used to perform the remote programming, or other operations
 on the FPGA chain, for either the mainboard
-or the LAMBs is \textbf{\texttt{\index{ambslp\_svfplayer}}}. The program has to
+or the LAMBs is \textbf{\texttt{ambslp\_svfplayer}}\index{ambslp\_svfplayer}. 
+The program has to
 be executed in the SBC where the board to be programmed is installed and has
 a very simple command line. Available options are:
 \begin{description}

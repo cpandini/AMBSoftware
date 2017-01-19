@@ -14,7 +14,8 @@ AMB RC module has a related schema.
 \subsection{Run control module implementation}
 \label{sec:rcmodule}
 
-The AMB RC module class is the \textbf{\texttt{\index{ReadoutModule\_Ambslp}}},
+The AMB RC module class is the \textbf{\texttt{ReadoutModule\_Ambslp}}
+\index{ReadoutModule\_Ambslp},
 inheriting
 form the \texttt{ROS::ReadoutModule}. It reimplements the following
 public methods: setup, configure, ... more details on the operations
@@ -128,7 +129,8 @@ The key is provided to allow to have unexpected parameter in the code in all cas
 where a new schema cannot be deployed, e.g. quick code patches. The parsing of the
 field is expected to be strongly dependent from the code tag.
 
-\item[PatternBankConf:] link to an OKS object of the \textbf{\index{PatternBankConf}} type,
+\item[PatternBankConf:] link to an OKS object of the \textbf{PatternBankConf}
+\index{PatternBankConf} type,
 see Sec.~\ref{sec:pattbankschema}. This objects describe the location of the pattern
 bank to be loaded in this bank, if no object is provided the configuration stage
 of the \RCModule will fail.
