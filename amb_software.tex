@@ -7,6 +7,8 @@
 \usepackage{multirow}
 %\usepackage{verbatim}
 
+\usepackage{makeidx}
+\makeindex
 
 \graphicspath{{logos/}{figures/}}
 
@@ -70,7 +72,7 @@ to the various.
 
 \subsection{Control the board status}
 To control the board status the main available command is
-\textbf{\texttt{ambslp\_status\_main}}. This should be
+\textbf{\texttt{\index{ambslp\_status\_main}}}. This should be
 launched from the VME SBC or in a node where the ATLAS Information
 Service (IS) available.
 
@@ -316,6 +318,14 @@ A pattern bank can be loaded from \ldots
 
 \input{ambslp_procedures}
 
+\section{Debugging the board}
+
+\subsection{Retrieve information from the spy-buffers}
+\input{ambslp_spybuffers}
+
+\subsection{Board simulation}
+\input{ambslp_boardsim}
+
 \section{Run control module}
 
 \input{ambslp_RC}
@@ -324,15 +334,15 @@ A pattern bank can be loaded from \ldots
 \label{sec:library}
 
 The \texttt{ambslp} package is mostly written in C++, requiring C++11 
-compatible compilers. It defines the \textbf{\AMBoard} class and other low
+compatible compilers. It defines the \textbf{\AMBoard} \index{AMBoard!class} and other low
 level function able to communicate, to spy or change the state of the board.
 Most of the 
 
 \section{Extra tools}
 
-\subsection{Board simulation}
+\subsection{Upload firmware on the board}
 
-\input{ambslp_boardsim}
+\input{ambslp_svfplayer}
 
 \appendix
 \section{Common example}
@@ -342,4 +352,5 @@ Most of the
 $ ambslp_procedure --slot 15 --bankpath random configure load connect
 \end{verbatim}
 
+\printindex
 \end{document}

@@ -1,0 +1,19 @@
+\label{sec:boardsim}
+A small program emulating the board is available within the software
+package. The board simulation program is 
+\textbf{\texttt{\index{ambslp\_boardsim}}}. The goal of the program 
+is compare a given input with the content of a pattern bank, as if loaded
+by the real board, and predict list of the output roads.
+
+An minimal example of how to use the simulation program is:
+\begin{verbatim}
+$ ambslp_boardsim -T 0 -N 131072 patterns.pbank.root sshits__L{0..11}.ss
+\end{verbatim}
+the first options are used to set the pattern bank type and how many
+patterns should be loaded per chip, in this case all patterns in an AM06 chip.
+The following arguments are the pattern bank file, in the same format
+used to populate the chips of a real board, while the following files are
+the list of input super-strips, here 12 files, 1 for each input link.
+The simulation will save the list of output roads in a file named, by default,
+\texttt{outroads\_sim.out}, having the same format of the output 
+spy-buffer dump using method 2.

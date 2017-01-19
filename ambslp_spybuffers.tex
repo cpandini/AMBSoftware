@@ -1,0 +1,40 @@
+An important tool to debug an \AMBoard while is working is to check the
+spy-buffers content. A spy-buffer is a buffer that stores the last data words
+received, or sent, by the board. In total there are 12 input and 16 output
+spy-buffers. Three different softwares are available to obtain the spy-buffers
+content: \textbf{\texttt{\index{ambslp\_inp\_spy\_main}}} is used to retrieve
+the input spy-buffers, \textbf{\texttt{\index{ambslp\_out\_spy\_main}}} 
+collects the output spy-buffers content, 
+the most recent one is 
+\textbf{\texttt{\index{ambslp\_spybuffer\_dumper\_main}}}, able to read
+both input and output buffers and it will only tool maintained in the future.
+More details on each program will be given in the following subsections.
+
+\subsubsection{Input spy-buffers dump}
+
+The \textbf{\texttt{\index{ambslp\_inp\_spy\_main}}} command
+allows to obtain the content of the 12 input spy-buffers. The program 
+requires a limited amount of options:
+\begin{description}
+\item[--slot num:] the slot number where the board is installed.
+
+\item[--method num:] this allows to change how the spy-buffers content is presented,
+more details later. Default is 0.
+\end{description}
+
+When used, the default behavior is to write on the screen a big table with 8192 rows
+and 24 columns. The columns are organized in pairs, in 
+each pair of columns the first represents the address in the buffer while the second
+its content. Each row represents...
+
+\subsubsection{Output spy-buffers dump}
+
+The \textbf{\texttt{\index{ambslp\_inp\_spy\_main}}} command
+
+\subsubsection{Spy-buffers dumper}
+The \textbf{\texttt{\index{ambslp\_spybuffer\_dumper\_main}}} command includes
+the functionalities of the previous two commands, with the advantage of allowing to
+read the them in a synchronized way. Additional features are also available, as
+the ability to store the information directly in files that can be used as input
+for the board simulation or as input for a standalone test of the board, see
+\pageref{sec:boardsim}.
