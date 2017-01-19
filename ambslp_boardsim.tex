@@ -129,13 +129,13 @@ By default the scripts output is very detailed and follows this structure:
 	
 	\item Road-by-road comparison. This is the largest block and is created 
 	comparing the roads found in a given event with the roads expected by the
-	emulation. In this case there are 3 possibilities: perfect match, 
-	extra roads,
-	missing roads; they will appear as follow:
+	emulation. In this case there are 4 possibilities: perfect match, 
+	extra roads, missing roads, and partial matches; they will appear as follow:
 \begin{verbatim}
   7f6ed908 7f6ed908 (3, 1, 3)
 + fb0610aa          (3, 0, 0)
 -          fb0048c3 (0, 0, 0)
+* 7f6ed908 ff6ed908 (3, 1, 3)
 \end{verbatim}	
 	in case of a perfect match the road word is repeated twice, the value
 	between brackets reports the chip ID within the readout chain, the readout
@@ -144,9 +144,59 @@ By default the scripts output is very detailed and follows this structure:
 	begin of the line, the right column related to the emulation is missing.
 	For missing roads, expected by the emulation but not found by the board,
 	the line starts with \texttt{-} symbol and the left column is missing.
+	Partial matches happen when a road with the same address, 6 least significant
+	digits, exists in the emulation and the board but the bitmask part of the
+	word is not equivalent, this condition is marked with the symbol 
+	\texttt{*} at the begin of the line.
+	
 	Within the block showing the road-by-road comparison there are end-event
-	words, used to subdivide the block.
+	words, used to subdivide the events. Those lines start with a 1 and show
+	the 2 end-event words, in case an event is only in the board (emulation)
+	output the right (left) column will be missing and all the roads
+	will be marked as extra (missing).
 	
 	\item After the the report on the roads a block showing eventually missing
-	end-events is reported. Here can appear end
+	end-events is reported. Here can appear end-event words that exist in the
+	emulation output but not found in the sp-buffers.
+	
+	\item A set of summary structures close the output. The first is a
+	a table-like structure reports for every chip the total number
+	missing (NoFoud), fully matched, partial, and extra roads. The structure is
+	replicated 4 times, one for each LAMB.
+	
+	Then two lines show the number of times a missing of partial roads used
+	a specific layer, with the goal of highlighting errors in a bus. After this a single long line reports the number of errors in each event.
+	
+	The very final lines provides a summary with the number of matched, missing,
+	extra, and partial roads found in all the events under comparison.
+	 
 \end{itemize}
+
+The default behaviour of the comparison script can be changed using command
+line options:
+\begin{description}
+	\item[--MaskLAMB, -L values:] this option allows to set a list of LAMB
+	IDs, roads in the emulation file compatible with chips in any of those
+	LAMBs will be suppressed and non counted in the comparison. This can be used
+	to test AMBs  with only few LAMBs installled.
+	
+	\item[--GlobalMatch, -G:] when use changes avoid to check the list of roads
+	event-by-event, producing a single list of all roads found in all the
+	events and comparing this list.
+	
+	\item[-q:] reduce the output text.
+	
+	\item[--AppendChipStat, -A file] save histograms with the statistic of 
+	the errors found in all the chips using an exisitng file. The file is
+	created if doesn't exist.
+	
+	\item[--VetoRoadsAbove, -V num:] the num value correspond to the first
+	pattern position in each chip that is not considered valid. This allows
+	to have comparison when a bank is partially loaded.
+	
+	\item[--SelectChip, -C num:] focus the comparison only on the roads
+	coming from a given chip.
+	
+	\item[--IgnorePattern0, -0:] when set the pattern in position 0 of each
+	AM chip is not considered in the comparison.
+\end{description}
