@@ -282,8 +282,8 @@ LAMB3 RX 8b/10b or disparity errors = 0x0
 
 The AMB initialization is performed sending a specific command
 to the board through the VME bus, this can be done using the 
-\textbf{\texttt{ambslp\_init\_main}} program. The program has two
-main options: the board slot (\verb|--slot--|)and reset level (\verb|--amb_lamb| 
+\textbf{\texttt{ambslp\_init\_main}}\index{ambslp\_init\_main} program. The program has two
+main options: the board slot (\verb|--slot|)and reset level (\verb|--amb_lamb| 
 or positional argument).
 Examples of the command line are:
 \begin{verbatim}
@@ -300,7 +300,7 @@ At the moment there are 4 initialization levels available:
 	
 	\item[2] performs a cleanup of the AMB's FIFOs.
 	
-	\item[3] perfoms a full reinitialization of the configuration registers
+	\item[3] performs a full re-initialization of the configuration registers
 	in the board.
 \end{description}
 

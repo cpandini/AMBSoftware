@@ -12,7 +12,7 @@ following:
 $ ambslp_procedure [options] transition1 [transition2 ...]
 \end{verbatim}
 where the options block can specify parameters used by one, or more,
-of the following \emph{transitions}. The optiosn are often in common
+of the following \emph{transitions}. The options are often in common
 with other tools, already described, clarifications already by the emended help.
 The \emph{transitions} are commands related to common procedures
 that the board needs, the name are often in common with the
@@ -20,7 +20,31 @@ run control module. The transitions will be executed
 sequentially, following the order in the submission string, they can 
 be also executed multiple times.
 
-Available transitions are described in deatails within the following 
+Available options:
+\begin{description}
+\item[--slot num:] value of the slot where board is installed.
+
+\item[--bankpath path:] path of the file describing the pattern bank file
+that should be loaded. The pattern bank object will be created even if
+the bank is not used.
+
+\item[--banktype, -T num:] pattern bank file type. Default 0.
+
+\item[--nPattsPerChip, -N num:] number of pattern that should be loaded
+per chip. Default 1.
+
+\item[--ForceWrite num:] if not 0 the pattern bank will loaded if an equivalent
+pattern bank appears to be already loaded. Default 0.
+
+\item[--dummyhit hex:] mask used to the dummy hit value. Default 0.
+
+\item[--interactive, -I:] if present after the last transition in the command line the
+console allow the user to interactively enter more transition. Exists with CTRL-D.
+
+\item[(--transition) transition:] this option allows to enter the transitions to be
+executed. The program executes them in the same order they are in the command line.
+\end{description}
+Available transitions are described in details within the following 
 subsections. The name of the procedures are often related to the run
 control transition, more details in \ref{sec:rcmodule}.
 
@@ -57,8 +81,24 @@ this command performs the
 \subsection{Connect the boards}
 \label{sec:procconnect}
 
-The keyword is	\textbf{connect}, this connects transition
+The keyword is	\textbf{connect} \index{ambslp\_procedure!connect}, this connects transition
 	of the ATLAS run control software, more explanation later, and
 	performs the link synchronization for the chips' input busses and
 	with the HIT FPGAs, also ensure the input links from the AUX
 	are properly set.
+    
+\subsection{Prepare for the run}
+
+Until the \emph{connect} state the AM board is isolated with respect
+to the neighboring board, the AUX card. In particular hold signals are raised,
+to avoid AUX sends input data, and eventually incoming data are discarded.
+\index{ambslp\_procedure!run} To allow the board to receive data the
+\textbf{run} transition. During this step the dummy-hit hit is set, allowing
+to reduce the matching errors.
+
+\subsection{Stop the data-acquisition}
+
+The \textbf{stop}\index{ambslp\_procedure!stop} transition is meant 
+to set the board back in the status as after
+the \emph{connect} status. This transition can be used to allow the board
+to stop the dataflow. The dummy-hit is also reset.
