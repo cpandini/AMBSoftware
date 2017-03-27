@@ -1,0 +1,43 @@
+The goal of all Pseudo-Random Binary Sequence (PRBS) tests is to verify the link to a Bit Error Ratio < $10^{12}$ (BER), which is 10 minutes at 2 Gbps.\\
+The script \textbf{\texttt{configure\_PRBS\_test.sh}}\index{configure\_PRBS\_test.sh} is used to configure the AMB, LAMBs and AUX to enable PRBS. The slot used by default is slot 15, other slots may be used calling \textbf{\texttt{source configure\_PRBS\_test.sh xx}} (xx = slot number).\\
+The script \textbf{\texttt{read\_AM\_out.sh}}\index{read\_AM\_out.sh}
+resets the GTP counters (so that the initial randomly sent errors are not counted anymore) and shows the errors in each of the 16 links (4 links for each of the 4 LAMBs). If there are no real errors, the counters are all “0”.
+The slot used by default is slot 15, other slots may be used calling \textbf{\texttt{source read\_AM\_out.sh xx}} (xx = slot number).\\
+The script \textbf{\texttt{read\_PRBS\_IN\_AMchip.sh}}\index{read\_PRBS\_IN\_AMchip.sh} checks the input links. The links of each of the eight buses and of each of the eight chains of the four LAMBS are checked. The script tests the links in several steps:
+\begin{itemize}
+\item Enable the PRBS generator and test the input links, the expected output is 0. If one or more errors are found a detailed output is printed.
+\item Disable the PRBS generator and retest the input links. In this case errors are expected on each link. The expected output is > 90. If on one or more links the output is less than 90 a detailed output is printed.
+\item Enable PRBS generator and retest 
+\item Stop for 10 seconds and retest 
+\item Stop for 10 minutes and retest
+\end{itemize}
+If an error is found at any step the test stops and a detailed output is printed.
+The slot used by default is slot 15, other slots may be used calling \textbf{\texttt{source read\_PRBS\_IN\_AMchio.sh xx}} (xx = slot number).\\
+The script \textbf{\texttt{read\_PRBS\_betweeen\_AMchip.sh}}\index{read\_PRBS\_between\_AMchip.sh} checks the links between the AM chips in each group of 4. 
+Both the Pattin0 and Pattin1 links are checked.
+The script tests the links in several steps:
+\begin{itemize}
+\item Enable the PRBS generator for pattin0 and test the pattin0 links, the expected output is 0. If one or more errors are found a detailed output is printed.
+\item Disable the PRBS generator and retest the pattin0 links. In this case errors are expected on each link. The expected output is > 90. If on one or more links the output is less than 90 a detailed output is printed.
+\item Enable the PRBS generator and retest 
+\item Stop for 10 seconds and retest 
+\item Stop for 10 minutes and retest
+\end{itemize}
+If an error is found at any step the test stops and a detailed output is printed. The procedure is then repeated for the pattin1 links.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
